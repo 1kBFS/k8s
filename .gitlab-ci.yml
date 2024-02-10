@@ -31,7 +31,7 @@ stages:
     - kubectl config use-context default
     - kubectl config get-contexts
     - kubectl config view
-    - kubectl delete --ignore-not-found=true secret --user=gitlab image-secret
+    - kubectl delete --context=default --ignore-not-found=true secret --user=gitlab image-secret
     - kubectl create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
   script:
     - set -ex
