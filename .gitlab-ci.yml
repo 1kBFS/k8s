@@ -28,7 +28,8 @@ stages:
     # - kubectl config set-context default --cluster=k8s --user=gitlab
     # - kubectl config use-context default
     # - kubectl config set-context --current --namespace ${KUBERNETES_NAMESPACE}
-    - cat $KUBECONFIG
+    - KUBECONFIG > /root/.kube/config
+    - kubectl get pods
     # - kubectl --namespace ${KUBERNETES_NAMESPACE} delete  --ignore-not-found=true secret image-secret
     # - kubectl --namespace ${KUBERNETES_NAMESPACE} create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
   script:
