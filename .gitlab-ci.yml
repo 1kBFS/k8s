@@ -34,6 +34,7 @@ stages:
     - helm template $HELM_RELEASE ${CI_PROJECT_DIR}/deploy 
       --debug 
     - apk add sshpass
+    - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org ls
     - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org kubectl --namespace ${KUBERNETES_NAMESPACE} delete  --ignore-not-found=true secret image-secret
     - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org kubectl --namespace ${KUBERNETES_NAMESPACE} create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
   script:
