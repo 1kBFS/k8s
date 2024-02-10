@@ -18,7 +18,7 @@ stages:
 #     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "staging")
     
 .Deploy: &Deploy
-  image: "dtzar/helm-kubectl:latest"
+  image: "dtzar/helm-kubectl:3.8.2"
   environment: 
     name: $ENV
   before_script:
@@ -30,7 +30,8 @@ stages:
     # - kubectl config set-context --current --namespace ${KUBERNETES_NAMESPACE}
     - mkdir -p /root/.kube
     - touch config
-    - cat $KUBECONFIG > /root/.kube/config
+    - cat $KUBECONFIG_FILE > /root/.kube/config
+    - KUBECONFIG=/root/.kube/config
     - kubectl get pods
     # - kubectl --namespace ${KUBERNETES_NAMESPACE} delete  --ignore-not-found=true secret image-secret
     # - kubectl --namespace ${KUBERNETES_NAMESPACE} create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
