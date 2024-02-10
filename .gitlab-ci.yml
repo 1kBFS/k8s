@@ -28,8 +28,8 @@ build_image:
     - kubectl config set-context default --cluster=k8s --user=gitlab
     - kubectl config use-context default
     - kubectl config set-context --current --namespace ${KUBERNETES_NAMESPACE}
-    - kubectl --namespace ${KUBERNETES_NAMESPACE} delete  --user=gitlab --ignore-not-found=true secret image-secret
-    - kubectl --namespace ${KUBERNETES_NAMESPACE} create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
+    - kubectl delete --ignore-not-found=true secret image-secret
+    - kubectl create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
   script:
     - set -ex
     - helm template $HELM_RELEASE ${CI_PROJECT_DIR}/deploy /
