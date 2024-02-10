@@ -19,9 +19,7 @@ stages:
 #     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "staging")
     
 .Deploy: &Deploy
-  image: "dtzar/helm-kubectl:3.8.2"
-  environment: 
-    name: $ENV
+  image: "dtzar/helm-kubectl:3.8.2" 
   before_script:
     # ВОПРОС:
     # !!!! Проблемы с таким подходом: при попытке выполнить запрос, например, kubectl get pods !reference 
@@ -52,7 +50,8 @@ stages:
       --history-max 3
       --wait 
       --timeout 600s
-      --atomic"
+      --atomic
+      --set global.ENV=${ENV}"
     - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org rm -r ~/deploy
 deploy_staging:
   <<: *Deploy
@@ -60,6 +59,9 @@ deploy_staging:
   variables:
     KUBERNETES_NAMESPACE: ${SERVER_LOGIN}
     ENV: test
+    environment: 
+    name: $ENV
+    url: test.facts.${SERVER_LOGIN}.kuber.atp-fivt.org
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "staging"
 
