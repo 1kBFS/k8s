@@ -22,13 +22,13 @@ stages:
   environment: 
     name: $ENV
   before_script:
-    - kubectl config set-cluster k8s --server="${KUBE_API_SERVER}"
-    - kubectl config set clusters.k8s.certificate-authority-data ${KUBE_CA}
-    - kubectl config set-credentials gitlab --token="${KUBE_TOKEN}"
-    - kubectl config set-context default --cluster=k8s --user=gitlab
-    - kubectl config use-context default
-    - kubectl config set-context --current --namespace ${KUBERNETES_NAMESPACE}
-    - kubectl get pods
+    # - kubectl config set-cluster k8s --server="${KUBE_API_SERVER}"
+    # - kubectl config set clusters.k8s.certificate-authority-data ${KUBE_CA}
+    # - kubectl config set-credentials gitlab --token="${KUBE_TOKEN}"
+    # - kubectl config set-context default --cluster=k8s --user=gitlab
+    # - kubectl config use-context default
+    # - kubectl config set-context --current --namespace ${KUBERNETES_NAMESPACE}
+    - cat $KUBECONFIG
     # - kubectl --namespace ${KUBERNETES_NAMESPACE} delete  --ignore-not-found=true secret image-secret
     # - kubectl --namespace ${KUBERNETES_NAMESPACE} create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
   script:
