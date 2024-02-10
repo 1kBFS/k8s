@@ -602,7 +602,7 @@ containerSecurityContext:
 resources:
    limits:
       cpu: 100m
-      memory: 128Mi
+      memory: 256Mi
    requests:
       cpu: 100m
       memory: 128Mi
@@ -1120,7 +1120,7 @@ persistence:
     - ReadWriteOnce
   ## @param persistence.size PVC Storage Request for MongoDB(&reg;) data volume
   ##
-  size: 1Gi
+  size: 250Mi
   ## @param persistence.annotations PVC annotations
   ##
   annotations: { }
