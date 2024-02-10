@@ -37,12 +37,13 @@ stages:
     - mkdir -p ~/.ssh/
     - ssh-keyscan -t rsa kuber.atp-fivt.org  >> ~/.ssh/known_hosts
     - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org "echo ${KUBERNETES_NAMESPACE} >> /home/tpos2023a/tpos2023a175/test.txt"
-    - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org kubectl --namespace ${KUBERNETES_NAMESPACE} delete  --ignore-not-found=true secret image-secret
-    - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org kubectl --namespace ${KUBERNETES_NAMESPACE} create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
+    - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org "kubectl --namespace ${KUBERNETES_NAMESPACE} delete  --ignore-not-found=true secret image-secret"
+    - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org "kubectl --namespace ${KUBERNETES_NAMESPACE} create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}"
+
   script:
     - set -ex
-    - echo "deploy" 
-
+    - sshpass -p ${SERVER_PASSWORD} scp ${CI_PROJECT_DIR}/deploy ${SERVER_LOGIN}@kuber.atp-fivt.org:~/deploy
+    
 deploy_staging:
   <<: *Deploy
   stage: deploy
