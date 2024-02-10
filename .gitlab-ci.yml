@@ -2,21 +2,21 @@ variables:
   HELM_RELEASE: deploy
   SSH: 
 stages:          
-  # - build
+  - build
   - deploy
 
-# build_image:
-#   stage: build
-#   image:
-#     name: gcr.io/kaniko-project/executor:v1.9.0-debug
-#     entrypoint: [""]
-#   script:
-#     - /kaniko/executor
-#       --context "${CI_PROJECT_DIR}/backend"
-#       --dockerfile "${CI_PROJECT_DIR}/backend/Dockerfile"
-#       --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
-#   rules:
-#     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "staging")
+build_image:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: [""]
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/backend"
+      --dockerfile "${CI_PROJECT_DIR}/backend/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "staging")
     
 .Deploy: &Deploy
   image: "dtzar/helm-kubectl:3.8.2" 
@@ -34,7 +34,7 @@ stages:
     # - kubectl config set-context --current --namespace ${KUBERNETES_NAMESPACE}
 
 
-    - helm template $HELM_RELEASE ${CI_PROJECT_DIR}/deploy 
+    - helm template $HELM_RELEASE-${ENV} ${CI_PROJECT_DIR}/deploy 
       --debug 
     - apk add sshpass
     - mkdir -p ~/.ssh/
@@ -44,26 +44,40 @@ stages:
 
   script:
     - set -ex
-    - sshpass -p ${SERVER_PASSWORD} scp -r ${CI_PROJECT_DIR}/deploy ${SERVER_LOGIN}@kuber.atp-fivt.org:~/
-    - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org  "helm upgrade --install $HELM_RELEASE ./deploy
+    - sshpass -p ${SERVER_PASSWORD} scp -r ${CI_PROJECT_DIR}/deploy ${SERVER_LOGIN}@kuber.atp-fivt.org:"/home/tpos2023a/${SERVER_LOGIN}/${ENV}"
+    - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org  "helm upgrade --install $HELM_RELEASE-${ENV} ./${ENV}/deploy
       --debug 
       --history-max 3
       --wait 
       --timeout 600s
       --atomic
-      --set global.ENV=${ENV}"
-    - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org rm -r ~/deploy
+      --set global.ENV=${ENV}
+      --set web-service.replicaCount=${SERVICE_REPLICA_COUNT}"
 deploy_staging:
   <<: *Deploy
   stage: deploy
   variables:
     KUBERNETES_NAMESPACE: ${SERVER_LOGIN}
     ENV: test
+    SERVICE_REPLICA_COUNT: 1
     environment: 
     name: $ENV
     url: test.facts.${SERVER_LOGIN}.kuber.atp-fivt.org
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "staging"
+  
+deploy_prod:
+  <<: *Deploy
+  stage: deploy
+  variables:
+    KUBERNETES_NAMESPACE: ${SERVER_LOGIN}
+    ENV: prod
+    SERVICE_REPLICA_COUNT: 1
+    environment: 
+    name: $ENV
+    url: facts.${SERVER_LOGIN}.kuber.atp-fivt.org
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
 
   
 
