@@ -72,7 +72,7 @@ deploy_prod:
   variables:
     KUBERNETES_NAMESPACE: ${SERVER_LOGIN}
     ENV: prod
-    SERVICE_REPLICA_COUNT: 2
+    SERVICE_REPLICA_COUNT: 1
     environment: 
     name: $ENV
     url: facts.${SERVER_LOGIN}.kuber.atp-fivt.org
