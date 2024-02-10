@@ -22,17 +22,18 @@ stages:
   environment: 
     name: $ENV
   before_script:
+    # Проблемы с таким подходом: при попытке выполнить запрос, например, kubectl get pods !reference 
+    #  couldn't get current server API group list: Get "https://93.175.29.167:16443/api?timeout=32s": dial tcp 93.175.29.167:16443: i/o timeout
     # - kubectl config set-cluster k8s --server="${KUBE_API_SERVER}"
     # - kubectl config set clusters.k8s.certificate-authority-data ${KUBE_CA}
     # - kubectl config set-credentials gitlab --token="${KUBE_TOKEN}"
     # - kubectl config set-context default --cluster=k8s --user=gitlab
     # - kubectl config use-context default
     # - kubectl config set-context --current --namespace ${KUBERNETES_NAMESPACE}
-    - mkdir -p /root/.kube
-    - touch config
-    - cat $KUBECONFIG_FILE > /root/.kube/config
-    - KUBECONFIG=/root/.kube/config
-    - kubectl get pods
+    - set -ex
+    - helm template $HELM_RELEASE ${CI_PROJECT_DIR}/deploy 
+      --debug 
+    - echo ${SERVER_PASSWORD} | ssh ${SERVER_LOGIN}@kuber.atp-fivt.org echo "${CI_PROJECT_DIR}, hello!"
     # - kubectl --namespace ${KUBERNETES_NAMESPACE} delete  --ignore-not-found=true secret image-secret
     # - kubectl --namespace ${KUBERNETES_NAMESPACE} create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
   script:
@@ -44,7 +45,7 @@ deploy_staging:
   <<: *Deploy
   stage: deploy
   variables:
-    KUBERNETES_NAMESPACE: tpos2023a175
+    KUBERNETES_NAMESPACE: ${SERVER_LOGIN}
     ENV: test
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "staging"
