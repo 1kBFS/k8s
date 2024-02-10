@@ -42,7 +42,13 @@ stages:
 
   script:
     - set -ex
-    - sshpass -p ${SERVER_PASSWORD} scp ${CI_PROJECT_DIR}/deploy ${SERVER_LOGIN}@kuber.atp-fivt.org:~/deploy
+    - sshpass -p ${SERVER_PASSWORD} scp ${CI_PROJECT_DIR}/deploy ${SERVER_LOGIN}@kuber.atp-fivt.org:~/
+    - sshpass -p ${SERVER_PASSWORD} ssh ${SERVER_LOGIN}@kuber.atp-fivt.org  "helm upgrade --install $HELM_RELEASE ./deploy
+      --debug 
+      --history-max 3
+      --wait 
+      --timeout 1200s
+      --atomic"
     
 deploy_staging:
   <<: *Deploy
