@@ -1,5 +1,8 @@
+variables:
+  HELM_RELEASE: deploy
 stages:          
   - build
+  - deploy
 
 build_image:
   stage: build
@@ -14,6 +17,32 @@ build_image:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "staging")
     
+.Deploy: &Deploy
+  image: "dtzar/helm-kubectl:3.8.2"
+  environment: 
+    name: $ENV
+  before_script:
+    kubectl config set-cluster k8s --server="${KUBE_API_SERVER}"
+    kubectl config set clusters.k8s.certificate-authority-data ${KUBE_CA}
+    kubectl config set-credentials gitlab --token="${KUBE_TOKEN}"
+    kubectl config set-context default --cluster=k8s --user=gitlab
+    kubectl config use-context default
+    kubectl config set-context --current --namespace ${KUBERNETES_NAMESPACE}
+  script:
+    - set -ex
+    - helm template $HELM_RELEASE ${CI_PROJECT_DIR}/deploy /
+      --debug 
+
+deploy_staging:
+  <<: *Deploy
+  stage: deploy
+  variables:
+    KUBERNETES_NAMESPACE: tpos2023a175
+    ENV: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "staging"
+
+  
 
 
  
