@@ -30,6 +30,7 @@ stages:
     - kubectl config set-context --current --namespace ${KUBERNETES_NAMESPACE}
     - kubectl config use-context default
     - kubectl config view
+    - kubectl get nodes -v=10
     - kubectl --namespace ${KUBERNETES_NAMESPACE} delete  --ignore-not-found=true secret image-secret
     - kubectl --namespace ${KUBERNETES_NAMESPACE} create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
   script:
