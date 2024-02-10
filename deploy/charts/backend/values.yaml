@@ -3,9 +3,9 @@ container:
   pullPolicy: Always
   resources:
     limits:
-      cpu: 50m
-      memory: 128Mi
+      cpu: 10m
+      memory: 30Mi
     requests:
-      cpu: 50m
-      memory: 128Mi
+      cpu: 10m
+      memory: 30Mi
 replicaCount: 2
