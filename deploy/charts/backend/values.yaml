@@ -1,0 +1,11 @@
+container:
+  image: registry.gitlab.atp-fivt.org/tpos2023a/polosinpa-hwkuber
+  pullPolicy: Always
+  resources:
+    limits:
+      cpu: 10m
+      memory: 30Mi
+    requests:
+      cpu: 10m
+      memory: 30Mi
+replicaCount: 2
