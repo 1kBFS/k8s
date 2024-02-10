@@ -34,7 +34,7 @@ stages:
     # - kubectl --namespace ${KUBERNETES_NAMESPACE} create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
   script:
     - set -ex
-    - helm template $HELM_RELEASE ${CI_PROJECT_DIR}/deploy /
+    - helm template $HELM_RELEASE ${CI_PROJECT_DIR}/deploy 
       --debug 
 
 deploy_staging:
