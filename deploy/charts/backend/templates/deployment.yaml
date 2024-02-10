@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}-web-deployment
+  labels:
+    app: {{.Release.Name}}-web-deployment
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-web
+          image: {{ .Values.container.image }}
+          imagePullPolicy: {{ .Values.container.pullPolicy }}
+          env:
+            - name: URL
+              value: mongodb://{{.Release.Name}}-mongodb.{{.Release.Namespace}}.svc.cluster.local
+          ports:
+            - containerPort: 8000
+          {{- if .Values.container.resources }}
+          resources: {{- toYaml .Values.container.resources | nindent 12 }}
+          {{- end }}
+      imagePullSecrets:
+        - name: image-secret
