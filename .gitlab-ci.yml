@@ -30,7 +30,7 @@ stages:
     # - kubectl config set-context default --cluster=k8s --user=gitlab
     # - kubectl config use-context default
     # - kubectl config set-context --current --namespace ${KUBERNETES_NAMESPACE}
-    - set -ex
+    # - set -ex
     - helm template $HELM_RELEASE ${CI_PROJECT_DIR}/deploy 
       --debug 
     - echo ${SERVER_PASSWORD} | ssh ${SERVER_LOGIN}@kuber.atp-fivt.org echo "${CI_PROJECT_DIR}, hello!"
@@ -38,8 +38,8 @@ stages:
     # - kubectl --namespace ${KUBERNETES_NAMESPACE} create secret docker-registry image-secret --docker-server=${CI_REGISTRY} --docker-username=${CI_DEPLOY_USER} --docker-password=${CI_DEPLOY_PASSWORD}
   script:
     - set -ex
-    - helm template $HELM_RELEASE ${CI_PROJECT_DIR}/deploy 
-      --debug 
+    # - helm template $HELM_RELEASE ${CI_PROJECT_DIR}/deploy 
+    #   --debug 
 
 deploy_staging:
   <<: *Deploy
