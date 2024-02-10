@@ -23,7 +23,7 @@ stages:
     name: $ENV
   before_script:
     - kubectl config set-cluster k8s --server="${KUBE_API_SERVER}"
-    - kubectl config set clusters.k8s.certificate-authority-data ${KUBE_CA} --set-raw-bytes=false
+    - kubectl config set clusters.k8s.certificate-authority-data $(echo ${KUBE_CA} | base64 -i -)
     - kubectl config set-credentials gitlab --username=gitlab
     - kubectl config set-credentials gitlab --token="${KUBE_TOKEN}"
     - kubectl config view
