@@ -640,7 +640,7 @@ readinessProbe:
   enabled: true
   initialDelaySeconds: 5
   periodSeconds: 10
-  timeoutSeconds: 5
+  timeoutSeconds: 30
   failureThreshold: 6
   successThreshold: 1
 ## Slow starting containers can be protected through startup probes
@@ -1120,7 +1120,7 @@ persistence:
     - ReadWriteOnce
   ## @param persistence.size PVC Storage Request for MongoDB(&reg;) data volume
   ##
-  size: 8Gi
+  size: 1Gi
   ## @param persistence.annotations PVC annotations
   ##
   annotations: { }
