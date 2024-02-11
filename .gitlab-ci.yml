@@ -61,7 +61,7 @@ deploy_staging:
     ENV: test
     SERVICE_REPLICA_COUNT: 1
     environment: 
-    name: $ENV
+    name: test
     url: test.facts.${SERVER_LOGIN}.kuber.atp-fivt.org
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "staging"
@@ -74,7 +74,7 @@ deploy_prod:
     ENV: prod
     SERVICE_REPLICA_COUNT: 1
     environment: 
-    name: $ENV
+    name: prod
     url: facts.${SERVER_LOGIN}.kuber.atp-fivt.org
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
