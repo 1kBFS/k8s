@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-web-svc
+  labels:
+    app: {{ .Release.Name }}-web-svc
+spec:
+  type: ClusterIP
+  ports:
+    - name: app-listener
+      protocol: TCP
+      port: 80
+      targetPort: 8000
+  selector:
+    app: {{ .Release.Name }}
